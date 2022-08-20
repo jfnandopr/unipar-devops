@@ -1,27 +1,25 @@
 services:
   web:
-    build: .
+    build: my-grails-app
     restart: always
     depends_on:
       - db
     ports:
-      - 8080:8080
+      - 8089:8080
     networks:
       - frontend
       - backend
     environment:
-      DB_SERVER: db
+      DB_HOST: db
       DB_USER: root
-      DB_PASS: 123456
-    volumes:
-      - wordpress:/var/www/html
+      DB_PASSWORD: 123456
 
   db:
-    image: mysql:5.7
+    image: mysql
     restart: always
     environment:
-      MYSQL_DATABASE: myapp
-      MYSQL_ROOT_PASSWORD: '123456'
+      MYSQL_DATABASE: my-grails-app
+      MYSQL_ROOT_PASSWORD: 123456
     volumes:
       - db:/var/lib/mysql
     networks:
@@ -33,7 +31,7 @@ services:
     depends_on:
       - db
     ports:
-      - 8081:8080
+      - 8088:8080
     networks:
       - backend
 
