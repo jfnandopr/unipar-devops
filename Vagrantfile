@@ -65,8 +65,9 @@ Vagrant.configure("2") do |config|
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    # install docker ubuntu
     export DEBIAN_FRONTEND=noninteractive
+    
+    # install docker
     sudo apt-get -yq install \
         ca-certificates \
         curl \
@@ -79,5 +80,34 @@ Vagrant.configure("2") do |config|
         $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
     sudo apt-get update
     sudo apt-get -yq install docker-ce docker-ce-cli containerd.io docker-compose-plugin docker-compose
+
+    # install terraform
+    #sudo apt-get update 
+    sudo apt-get install -y gnupg software-properties-common
+    wget -O- https://apt.releases.hashicorp.com/gpg | \
+      gpg --dearmor | \
+      sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+      https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+      sudo tee /etc/apt/sources.list.d/hashicorp.list  
+    sudo apt update
+    sudo apt-get install -y terraform
+    terraform version
+
+    # install AWS CLI
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    sudo apt-get install -y unzip less
+    unzip awscliv2.zip && rm awscliv2.zip
+    sudo ./aws/install
+
+    #install ansible
+    #sudo apt update
+    #sudo apt install software-properties-common
+    sudo add-apt-repository --yes --update ppa:ansible/ansible
+    sudo apt install -y ansible
+    ansible --version
+
+    # ssh key pair generate
+    sudo ssh-keygen -t rsa -N "" -q -f "/root/.ssh/id_rsa"
   SHELL
 end
