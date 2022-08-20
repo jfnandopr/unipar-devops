@@ -54,10 +54,6 @@ resource "aws_security_group" "web" {
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
   }
-
-  tags = {
-    Name = "HTTP Access"
-  }
 }
 
 resource "aws_instance" "web" {
