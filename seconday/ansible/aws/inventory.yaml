@@ -1,6 +1,5 @@
-awsec2:
+grailsservers:
   hosts:
-    ec2-grails:
-      ansible_host: ec2-44-201-77-22.compute-1.amazonaws.com
+    ec2-44-201-77-22.compute-1.amazonaws.com
   vars:
     ansible_user: ubuntu
