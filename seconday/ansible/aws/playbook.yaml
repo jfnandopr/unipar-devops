@@ -1,0 +1,8 @@
+- name: My first play
+  hosts: ec2-grails
+  tasks:
+   - name: Ping my hosts
+     ansible.builtin.ping:
+   - name: Print message
+     ansible.builtin.debug:
+       msg: Hello world
