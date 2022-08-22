@@ -36,7 +36,6 @@ services:
       - backend
 
 volumes:
-  wordpress:
   db:
 
 networks:
