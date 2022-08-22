@@ -1,0 +1,82 @@
+name: CI/CD
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  release:
+    name: Criar Release
+    runs-on: ubuntu-latest
+        
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+        
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '8'
+
+      - name: Run tests
+        run: ./grailsw compile
+
+      - name: Run tests
+        run: ./grailsw test-app
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: jfnandopr/my-grails-app
+          
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+      
+
+  deploy:
+    name: Deploy AWS
+    runs-on: ubuntu-latest
+    needs: release
+    strategy:
+      matrix:
+        instance-id: ['i-0db9f96d9bc6f41bc']
+        
+    steps:
+      - name: Install AWS CLI 
+        run: |
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install --update
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+          
+      - name: Deploy to AWS
+        run: |
+          aws ssm send-command \
+          --document-name "AWS-RunShellScript" \
+          --instance-ids {{ matrix.instance-id }} \
+          --parameters commands="cd /home/ubuntu && sudo docker-compose up -d" \
+          --region us-east-1 --output text
