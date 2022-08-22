@@ -19,11 +19,11 @@ jobs:
           distribution: 'corretto'
           java-version: '8'
 
-      - name: Run tests
+      - name: Compile
         run: ./grailsw compile
 
       - name: Run tests
         run: ./grailsw test-app
 
-      - name: Run tests
+      - name: Build
         run: ./grailsw prod war
