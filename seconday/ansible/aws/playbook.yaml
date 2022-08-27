@@ -1,5 +1,5 @@
 - name: My first play
-  hosts: grailsservers
+  hosts: webserver01
   tasks:
    - name: Ping my hosts
      ansible.builtin.ping:

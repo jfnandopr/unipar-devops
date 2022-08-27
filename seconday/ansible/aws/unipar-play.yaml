@@ -1,5 +1,5 @@
 - name: Instalar aplicação WEB no servidor EC2 AWS
-  hosts: ec2-grails
+  hosts: grailsservers
   tasks:
     - name: Instalar docker e docker-compose
       become: yes
