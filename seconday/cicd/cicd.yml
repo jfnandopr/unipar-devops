@@ -41,7 +41,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: jfnandopr/my-grails-app
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/my-grails-app
           
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -77,6 +77,6 @@ jobs:
         run: |
           aws ssm send-command \
           --document-name "AWS-RunShellScript" \
-          --instance-ids {{ matrix.instance-id }} \
+          --instance-ids i-017258787979ba950 \
           --parameters commands="cd /home/ubuntu && sudo docker-compose up -d" \
           --region us-east-1 --output text
