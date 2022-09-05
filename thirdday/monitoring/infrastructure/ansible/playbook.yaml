@@ -1,0 +1,53 @@
+- name: Instalar aplicação WEB no servidor EC2 AWS
+  hosts: ec2-grails
+  vars:
+    app_path: /home/ubuntu
+  tasks:
+    - name: Instalar pacotes requeridos
+      become: yes
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - lsb-release
+        state: latest
+        update_cache: true
+
+    - name: Adicionar Docker GPG apt Key
+      become: yes
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Adicionar Repositório Docker
+      become: yes
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Instalar docker
+      become: yes
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+        
+    - name: Instalar docker-compose
+      become: yes
+      apt:
+        name: docker-compose
+        state: latest
+        update_cache: true
+
+    - name: Copiar docker-compose.yml
+      copy:
+        src: docker-compose.yml
+        dest: "{{ app_path }}"
+
+    - name: Run `docker-compose up` again
+      become: yes
+      community.docker.docker_compose:
+        project_src: "{{ app_path }}"
+        build: no

@@ -44,7 +44,8 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder ".", "/worskpace"
+  config.vm.synced_folder ".", "/workspace"
+  config.vm.synced_folder "../my-grails-app", "/workspace/my-grails-app"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -55,7 +56,7 @@ Vagrant.configure("2") do |config|
   #   vb.gui = true
   #
   #   # Customize the amount of memory on the VM:
-     vb.memory = "1024"
+     vb.memory = "1536"
   end
   #
   # View the documentation for the provider you are using for more
@@ -109,5 +110,18 @@ Vagrant.configure("2") do |config|
 
     # ssh key pair generate
     sudo ssh-keygen -t rsa -N "" -q -f "/root/.ssh/id_rsa"
+
+    # vagrant docker access permission without sudo
+    sudo usermod -aG docker vagrant
+    newgrp docker
+
+    # intall stress test tool
+    sudo apt install -yq stress apache2-utils
+    # stress --cpu 1 --io 1 --vm 2 --vm-bytes 256M --timeout 180s -v
+    # ab -c 200 -n 1000 -r http://192.168.33.10:8089
+
+    # define timezone
+    sudo timedatectl set-timezone America/Sao_Paulo
+
   SHELL
 end

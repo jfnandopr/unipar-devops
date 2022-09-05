@@ -1,0 +1,123 @@
+volumes:
+    grafana-data:
+    prometheus-data:
+    alertmanager-data:
+    loki-data:
+
+networks:
+  front-net:
+  back-net:
+
+services:
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=unipar
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    networks:
+      - back-net
+      - front-net
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus-config:/etc/prometheus
+    ports:
+      - 9090:9090
+    networks:
+      - back-net
+
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager-config:/etc/alertmanager
+      - alertmanager-data:/alertmanager
+    networks:
+      - back-net
+    ports:
+      - 9093:9093
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    volumes:
+      - /proc:/usr/proc
+      - /sys:/usr/sys
+      - /:/rootfs
+    ports:
+      - 9100:9100
+    networks:
+      - back-net
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    container_name: cadvisor
+    privileged: true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk:/dev/disk/:ro
+    ports:
+      - 8080:8080
+    networks:
+      - back-net
+
+  loki:
+    image: grafana/loki
+    container_name: loki
+    volumes:
+      - loki-data:/loki
+    ports:
+      - 3100:3100
+    networks:
+      - back-net
+
+  promtail:
+    image: grafana/promtail
+    container_name: promtail
+    # https://github.com/grafana/loki/blob/main/clients/cmd/promtail/Dockerfile
+    command: -config.file=/etc/promtail/promtail-config.yaml
+    volumes:
+      - ./promtail-config:/etc/promtail
+      - /var/log:/var/log:ro
+    ports:
+      - 9080:9080
+    networks:
+      - back-net
+
+  fluent-bit:
+    image: grafana/fluent-bit-plugin-loki
+    container_name: fluent-bit
+    environment:
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+    volumes:
+      - ./fluentbit-config/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+    ports:
+      - 24224:24224
+      - 24224:24224/udp
+    networks:
+      - back-net
+
+  app:
+    image: nginx
+    container_name: nginx
+    depends_on:
+      - fluent-bit
+    networks:
+      - back-net
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 192.168.33.10:24224
