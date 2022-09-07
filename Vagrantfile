@@ -123,5 +123,7 @@ Vagrant.configure("2") do |config|
     # define timezone
     sudo timedatectl set-timezone America/Sao_Paulo
 
+    # install make
+    sudo apt install -yq make
   SHELL
 end
