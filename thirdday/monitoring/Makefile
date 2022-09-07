@@ -1,4 +1,9 @@
-all: init prepare-and-deploy
+all: start
+
+start:
+	docker-compose -f docker-compose.yml up -d
+
+deploy: init prepare-and-deploy
 
 init:
 	dir=$(pwd)

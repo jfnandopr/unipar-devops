@@ -13,15 +13,15 @@ route:
   receiver: 'mail'
   repeat_interval: 5m
   routes:
-    - receiver: 'slack-devops'
+    - receiver: 'mail'
       repeat_interval: 5m
       matchers:
         - severity="low"
 
-    - receiver: 'slack-devops'
-      repeat_interval: 5m
-      matchers:
-        - severity="high"
+    # - receiver: 'slack-devops'
+    #   repeat_interval: 5m
+    #   matchers:
+    #     - severity="high"
 
 receivers:
   - name: 'mail'
