@@ -110,14 +110,14 @@ services:
     networks:
       - back-net
 
-  app:
-    image: nginx
-    container_name: nginx
-    depends_on:
-      - fluent-bit
-    networks:
-      - back-net
-    logging:
-      driver: fluentd
-      options:
-        fluentd-address: 192.168.33.10:24224
+  # app:
+  #   image: nginx
+  #   container_name: nginx
+  #   depends_on:
+  #     - fluent-bit
+  #   networks:
+  #     - back-net
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #       fluentd-address: 192.168.33.10:24224
