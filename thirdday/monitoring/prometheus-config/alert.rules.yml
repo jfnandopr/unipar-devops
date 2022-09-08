@@ -6,16 +6,16 @@ groups:
     expr: up == 0
     for: 5m
     labels: # labels and annotations are new
-      severity: hight
+      severity: high
       team: devops
     annotations:
-      summary: 'Alert with hight severity.'
+      summary: 'Alert with high severity.'
 
   - alert: HighLoad
     expr: node_load1 > 0.5
     for: 2m
     labels:
-      severity: hight
+      severity: high
       team: devops
     annotations:
       summary: "Instance {{ $labels.instance }} under high load"
