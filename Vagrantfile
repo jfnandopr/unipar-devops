@@ -110,6 +110,7 @@ Vagrant.configure("2") do |config|
 
     # ssh key pair generate
     sudo ssh-keygen -t rsa -N "" -q -f "/root/.ssh/id_rsa"
+    sudo ssh-keygen -t rsa -N "" -q -f "/vagrant/.ssh/id_rsa" 
 
     # vagrant docker access permission without sudo
     sudo usermod -aG docker vagrant

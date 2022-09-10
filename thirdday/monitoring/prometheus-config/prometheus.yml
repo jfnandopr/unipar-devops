@@ -38,5 +38,5 @@ scrape_configs:
   - job_name: 'grails-app'
     metrics_path: /actuator/prometheus
     static_configs:
-      - targets: ['grails-app:8089']
+      - targets: ['grails-app']
       

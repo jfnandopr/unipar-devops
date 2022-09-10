@@ -1,7 +1,7 @@
 - name: Instalar aplicação WEB no servidor EC2 AWS
-  hosts: ec2-grails
+  hosts: monitoring
   vars:
-    app_path: /home/ubuntu
+    app_path: /home/ubuntu/monitoring
   tasks:
     - name: Instalar pacotes requeridos
       become: yes
@@ -41,10 +41,10 @@
         state: latest
         update_cache: true
 
-    - name: Copiar docker-compose.yml
+    - name: Copiar Arquivos
       copy:
-        src: docker-compose.yml
-        dest: "{{ app_path }}"
+        src: ../../monitoring
+        dest: /home/ubuntu/
 
     - name: Run `docker-compose up` again
       become: yes
