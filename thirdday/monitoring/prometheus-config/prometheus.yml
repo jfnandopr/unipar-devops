@@ -36,7 +36,7 @@ scrape_configs:
         - 'loki:3100'
 
   - job_name: 'grails-app'
-    metrics_path: /prometheus
+    metrics_path: /actuator/prometheus
     static_configs:
-      - targets: ['192.168.33.10:8089']
+      - targets: ['grails-app:8089']
       

@@ -6,7 +6,7 @@ global:
   # auth_password: ""
   # from: 'your_mail@gmail.com'
   # slack config
-  slack_api_url: 'https://hooks.slack.com/services/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'
+  # slack_api_url: 'https://hooks.slack.com/services/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'
 
 route:
   group_by: [ alertname ]
